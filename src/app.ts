@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import { router } from './routes/api.js';
 import { apiRouter } from './routes/index.js';
 
-const app = express();
+const app = express();  
 
 app.use('/', apiRouter);
 app.use(router);
