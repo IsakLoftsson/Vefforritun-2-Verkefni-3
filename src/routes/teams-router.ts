@@ -1,9 +1,10 @@
-import express, { Request, Response, NextFunction} from 'express';
+import { Request, Response, NextFunction} from 'express';
 import slugify from 'slugify';
 
 import { Team } from '../lib/types';
 import { teamMapper } from '../lib/mappers';
-import { getTeams } from '../lib/db';
+import { getTeams, getTeamBySlug, deleteTeamBySlug, insertTeam, conditionalUpdate } from '../lib/db';
+import { atLeastOneBodyValueValidator, genericSanitizer, stringValidator, teamDoesNotExistValidator, validationCheck, xssSanitizer } from '../lib/validation';
 
 export async function listTeams(
     req: Request,
@@ -40,13 +41,12 @@ export async function createTeamHandler(
   res: Response,
   next: NextFunction,
 ) {
-  const { title, description } = req.body;
+  const { name, description } = req.body;
 
   const teamToCreate: Omit<Team, 'id'> = {
-    title,
-    slug: slugify(title),
-    description,
-    courses: [],
+    name,
+    slug: slugify(name),
+    description
   };
 
   const createdDeprtment = await insertTeam(teamToCreate, false);
@@ -59,31 +59,31 @@ export async function createTeamHandler(
 }
 
 export const createTeam = [
-  stringValidator({ field: 'title', maxLength: 64 }),
+  stringValidator({ field: 'name', maxLength: 64 }),
   stringValidator({
     field: 'description',
     valueRequired: false,
     maxLength: 1000,
   }),
   teamDoesNotExistValidator,
-  xssSanitizer('title'),
+  xssSanitizer('name'),
   xssSanitizer('description'),
   validationCheck,
-  genericSanitizer('title'),
+  genericSanitizer('name'),
   genericSanitizer('description'),
   createTeamHandler,
 ];
 
 export const updateTeam = [
-  stringValidator({ field: 'title', maxLength: 64, optional: true }),
+  stringValidator({ field: 'name', maxLength: 64, optional: true }),
   stringValidator({
     field: 'description',
     valueRequired: false,
     maxLength: 1000,
     optional: true,
   }),
-  atLeastOneBodyValueValidator(['title', 'description']),
-  xssSanitizer('title'),
+  atLeastOneBodyValueValidator(['name', 'description']),
+  xssSanitizer('name'),
   xssSanitizer('description'),
   validationCheck,
   updateTeamHandler,
@@ -101,23 +101,23 @@ export async function updateTeamHandler(
     return next();
   }
 
-  const { title, description } = req.body;
+  const { name, description } = req.body;
 
   const fields = [
-    typeof title === 'string' && title ? 'title' : null,
-    typeof title === 'string' && title ? 'slug' : null,
+    typeof name === 'string' && name ? 'name' : null,
+    typeof name === 'string' && name ? 'slug' : null,
     typeof description === 'string' && description ? 'description' : null,
   ];
 
   const values = [
-    typeof title === 'string' && title ? title : null,
-    typeof title === 'string' && title ? slugify(title).toLowerCase() : null,
+    typeof name === 'string' && name ? name : null,
+    typeof name === 'string' && name ? slugify(name).toLowerCase() : null,
     typeof description === 'string' && description ? description : null,
   ];
 
   const updated = await conditionalUpdate(
     'team',
-    team.id,
+    team.id, // ?????????????????
     fields,
     values,
   );
@@ -178,3 +178,5 @@ export async function indexRoute(req: Request, res: Response) {
 }
  
 teamsRouter.get('/', indexRoute);
+
+*/

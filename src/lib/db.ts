@@ -1,5 +1,5 @@
 import pg from 'pg';
-import { Game, Team } from '../types.js';
+import { Game, Team } from './types.js';
 import {
   gameMapper,
   gamesMapper,
@@ -58,7 +58,7 @@ export async function query(
 }
 
 export async function conditionalUpdate(
-  table: 'team' | 'game',
+  table: 'team' | 'games',
   id: number,
   fields: Array<string | null>,
   values: Array<string | number | null>,
@@ -108,7 +108,6 @@ export async function getTeams(): Promise<Array<Team> | null> {
   }
 
   const teams = teamsMapper(result.rows).map((d) => {
-    delete d.games;
     return d;
   });
 
@@ -131,6 +130,23 @@ export async function getTeamBySlug(
   return team;
 }
 
+export async function getTeamById(
+  id: number,
+): Promise<Team | null> {
+  const result = await query('SELECT * FROM team WHERE id = $1', [
+    id,
+  ]);
+
+  if (!result || result.rows.length === 0) {
+    return null;
+  }
+
+  const team = teamMapper(result.rows[0]);
+
+  return team;
+}
+
+
 export async function deleteTeamBySlug(slug: string): Promise<boolean> {
   const result = await query('DELETE FROM team WHERE slug = $1', [slug]);
 
@@ -145,10 +161,10 @@ export async function insertTeam(
   team: Omit<Team, 'id'>,
   silent = false,
 ): Promise<Team | null> {
-  const { title, slug, description } = team;
+  const { name, slug, description } = team;
   const result = await query(
-    'INSERT INTO team (title, slug, description) VALUES ($1, $2, $3) RETURNING id, title, slug, description, created, updated',
-    [title, slug, description],
+    'INSERT INTO team (name, slug, description) VALUES ($1, $2, $3) RETURNING id, name, slug, description, created, updated',
+    [name, slug, description],
     silent,
   );
 
@@ -159,13 +175,12 @@ export async function insertTeam(
 
 export async function insertGame(
   game: Omit<Game, 'id'>,
-  teamId: number,
   silent = false,
 ): Promise<Game | null> {
-  const { title, units, semester, level, url, gameId } = game;
+  const { date, home, away, home_score, away_score } = game;
   const result = await query(
-    'INSERT INTO game (title, units, semester, level, url, team_id, game_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-    [title, units, semester, level, url, teamId, gameId],
+    'INSERT INTO games (date, home, away, home_score, away_score) VALUES ($1, (SELECT id FROM teams WHERE name = $2), (SELECT id FROM teams WHERE name = $3), $4, $5) RETURNING *',
+    [date, home, away, home_score, away_score],
     silent,
   );
 
@@ -177,7 +192,7 @@ export async function insertGame(
 export async function getGamesByTeamId(
   id: number,
 ): Promise<Array<Game>> {
-  const result = await query(`SELECT * FROM game WHERE team_id = $1`, [
+  const result = await query(`SELECT * FROM games WHERE team_id = $1`, [
     id,
   ]);
 
@@ -191,7 +206,7 @@ export async function getGamesByTeamId(
 }
 
 export async function getGameByTitle(title: string): Promise<Game | null> {
-  const result = await query(`SELECT * FROM game WHERE title = $1`, [title]);
+  const result = await query(`SELECT * FROM games WHERE title = $1`, [title]);
 
   if (!result) {
     return null;
@@ -203,9 +218,9 @@ export async function getGameByTitle(title: string): Promise<Game | null> {
 }
 
 export async function getGameByGameId(
-  gameId: string,
+  gameId: number,
 ): Promise<Game | null> {
-  const result = await query(`SELECT * FROM game WHERE game_id = $1`, [
+  const result = await query(`SELECT * FROM games WHERE game_id = $1`, [
     gameId,
   ]);
 
@@ -221,7 +236,7 @@ export async function getGameByGameId(
 export async function deleteGameByGameId(
   gameId: string,
 ): Promise<boolean> {
-  const result = await query('DELETE FROM game WHERE game_id = $1', [
+  const result = await query('DELETE FROM games WHERE game_id = $1', [
     gameId,
   ]);
 
