@@ -29,14 +29,14 @@ export async function indexRoute(req: Request, res: Response) {
 
 apiRouter.get('/', indexRoute);
 
-apiRouter.get('/', listTeams);
-apiRouter.post('/', createTeam);
-apiRouter.get('/:slug', getTeam);
-apiRouter.patch('/:slug', updateTeam);
-apiRouter.delete('/:slug', deleteTeam);
+apiRouter.get('/teams', listTeams);
+apiRouter.post('/teams', createTeam);
+apiRouter.get('/teams/:slug', getTeam);
+apiRouter.patch('/teams/:slug', updateTeam);
+apiRouter.delete('/teams/:slug', deleteTeam);
 
-apiRouter.get('/', listGames);
-// apiRouter.post('/', createGame);
-apiRouter.get('/:id', getGame);
-// apiRouter.patch('/:id', updateGame);
-// apiRouter.delete('/:id', deleteGame);
+apiRouter.get('/games', listGames);
+// apiRouter.post('/games', createGame);
+apiRouter.get('/games/:id', getGame);
+// apiRouter.patch('/games/:id', updateGame);
+// apiRouter.delete('/games/:id', deleteGame);
