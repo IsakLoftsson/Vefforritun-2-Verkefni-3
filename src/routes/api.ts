@@ -1,3 +1,4 @@
+/*
 import express, { Request, Response, NextFunction } from 'express';
 import { sayHello } from '../lib/hello.js';
 
@@ -20,3 +21,4 @@ router.get('/test', hello, bye);
 
 // Mun crasha öllu
 router.get('/error', error);
+*/

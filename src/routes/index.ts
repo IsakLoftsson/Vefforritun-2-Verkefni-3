@@ -1,46 +1,42 @@
 import express, { Request, Response, NextFunction} from 'express';
-import { teamsRouter } from './teams-router.js';
+import { teamsRouter, listTeams } from './teams-router.js';
+import { gamesRouter } from './games-router.js';
 
 export const apiRouter = express.Router();
 
 export async function indexRoute(req: Request, res: Response) {
     return res.json([
       {
-        href: '/departments',
+        href: '/teams',
         methods: ['GET', 'POST'],
       },
       {
-        href: '/departments/:slug',
+        href: '/teams/:slug',
         methods: ['GET', 'PATCH', 'DELETE'],
       },
       {
-        href: '/departments/:slug/courses',
+        href: '/games',
         methods: ['GET', 'POST'],
       },
       {
-        href: '/departments/:slug/courses/:courseId',
+        href: '/games/:slug',
         methods: ['GET', 'PATCH', 'DELETE'],
       },
     ]);
 }
 
-// Departments
-router.get('/', index);
-router.get('/departments', listDepartments);
-router.post('/departments', createDepartment);
-router.get('/departments/:slug', getDepartment);
-router.patch('/departments/:slug', updateDepartment);
-router.delete('/departments/:slug', deleteDepartment);
-
-// Courses
-router.get('/departments/:slug/courses', listCourses);
-router.post('/departments/:slug/courses', createCourse);
-router.get('/departments/:slug/courses/:courseId', getCourse);
-router.patch('/departments/:slug/courses/:courseId', updateCourse);
-router.delete('/departments/:slug/courses/:courseId', deleteCourse);
-
 apiRouter.get('/', indexRoute);
 apiRouter.use('/teams', teamsRouter);
 apiRouter.use('/games', gamesRouter);
 
-teamsRouter.get('/', getTeams);
+teamsRouter.get('/', listTeams);
+teamsRouter.post('/', createTeam);
+teamsRouter.get('/:slug', getTeam);
+teamsRouter.patch('/:slug', updateTeam);
+teamsRouter.delete('/:slug', deleteTeam);
+
+gamesRouter.get('/', listGames);
+gamesRouter.post('/', createGame);
+gamesRouter.get('/:id', getGame);
+gamesRouter.patch('/:id', updateGame);
+gamesRouter.delete('/:id', deleteGame);
