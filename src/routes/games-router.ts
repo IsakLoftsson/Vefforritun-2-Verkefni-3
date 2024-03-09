@@ -76,6 +76,8 @@ export async function createGamesHandler(
   return res.json(gameMapper(createdGame));
 }
 
+/*
+
 const gameFields = ['gameId', 'title', 'level', 'url', 'semester', 'units'];
 
 export const createGame = [
@@ -205,3 +207,4 @@ function semesterValidator(arg0: { field: string; }) {
   throw new Error('Function not implemented.');
 }
 
+*/

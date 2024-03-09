@@ -3,7 +3,7 @@ import { validationResult, body } from 'express-validator';
 import slugify from 'slugify';
 import xss from 'xss';
 
-import { getTeamBySlug, getGameByGameId } from './db';
+import { getTeamBySlug, getGameByGameId } from './db.js';
 
 export function validationCheck(
     req: Request,

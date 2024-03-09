@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction} from 'express';
 import slugify from 'slugify';
 
-import { Team } from '../lib/types';
-import { teamMapper } from '../lib/mappers';
-import { getTeams, getTeamBySlug, deleteTeamBySlug, insertTeam, conditionalUpdate } from '../lib/db';
-import { atLeastOneBodyValueValidator, genericSanitizer, stringValidator, teamDoesNotExistValidator, validationCheck, xssSanitizer } from '../lib/validation';
+import { Team } from '../lib/types.js';
+import { teamMapper } from '../lib/mappers.js';
+import { getTeams, getTeamBySlug, deleteTeamBySlug, insertTeam, conditionalUpdate } from '../lib/db.js';
+import { atLeastOneBodyValueValidator, genericSanitizer, stringValidator, teamDoesNotExistValidator, validationCheck, xssSanitizer } from '../lib/validation.js';
 
 export async function listTeams(
     req: Request,

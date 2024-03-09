@@ -1,6 +1,8 @@
 import express, { Request, Response, NextFunction} from 'express';
+
 import { listTeams, createTeam, getTeam, updateTeam, deleteTeam } from './teams-router.js';
-import { listGames, createGame, getGame, updateGame, deleteGame } from './games-router.js';
+import { listGames, getGame } from './games-router.js';
+// , createGame, updateGame, deleteGame } from './games-router.js';
 
 export const apiRouter = express.Router();
 
@@ -34,7 +36,7 @@ apiRouter.patch('/:slug', updateTeam);
 apiRouter.delete('/:slug', deleteTeam);
 
 apiRouter.get('/', listGames);
-apiRouter.post('/', createGame);
+// apiRouter.post('/', createGame);
 apiRouter.get('/:id', getGame);
-apiRouter.patch('/:id', updateGame);
-apiRouter.delete('/:id', deleteGame);
+// apiRouter.patch('/:id', updateGame);
+// apiRouter.delete('/:id', deleteGame);

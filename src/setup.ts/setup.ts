@@ -1,4 +1,5 @@
 import { readFile } from 'fs/promises';
+
 import { query } from '../lib/db.js';
 
 async function drop() {

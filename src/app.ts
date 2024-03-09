@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import express, { Request, Response, NextFunction } from 'express';
+
 import { apiRouter } from './routes/index.js';
 import { cors } from './lib/cors.js';
 
