@@ -3,7 +3,9 @@ import slugify from 'slugify';
 
 import { Game } from '../lib/types.js';
 import { gameMapper } from '../lib/mappers.js';
-import { getGames, getGameBySlug, deleteGameBySlug, insertGame, conditionalUpdate } from '../lib/db.js';
+import { insertGame, conditionalUpdate, getTeamBySlug, getGamesByTeamId, getGameByGameId, deleteGameByGameId } from '../lib/db.js';
+import { atLeastOneBodyValueValidator, genericSanitizerMany, stringValidator, validationCheck, xssSanitizerMany } from '../lib/validation.js';
+import { body } from 'express-validator';
 
 export async function listGames(
   req: Request,
@@ -32,15 +34,9 @@ export async function getGame(
   res: Response,
   next: NextFunction,
 ) {
-  const { slug, gameId } = req.params;
+  const { gameId } = req.params;
 
-  const team = await getTeamBySlug(slug);
-
-  if (!team) {
-    return next();
-  }
-
-  const game = await getGameByGameId(gameId);
+  const game = await getGameByGameId(Number(gameId));
 
   if (!game) {
     return next();
@@ -55,7 +51,7 @@ export async function createGamesHandler(
   next: NextFunction,
 ) {
   const { slug } = req.params;
-  const { gameId, title, units, semester, level, url } = req.body;
+  const { date, home, away, home_score, away_score } = req.body;
 
   const team = await getTeamBySlug(slug);
 
@@ -64,19 +60,14 @@ export async function createGamesHandler(
   }
 
   const gameToCreate: Omit<Game, 'id'> = {
-    title,
-    units,
-    semester,
-    level,
-    url,
-    gameId,
+    date: new Date(date),
+    home,
+    away,
+    home_score,
+    away_score
   };
 
-  const createdGame = await insertGame(
-    gameToCreate,
-    team.id,
-    false,
-  );
+  const createdGame = await insertGame(gameToCreate);
 
   if (!createdGame) {
     return next(new Error('unable to create game'));
@@ -96,8 +87,6 @@ export const createGame = [
   semesterValidator({ field: 'semester' }),
   stringValidator({ field: 'level', valueRequired: false, maxLength: 128 }),
   stringValidator({ field: 'url', valueRequired: false, maxLength: 256 }),
-  gameTitleDoesNotExistValidator,
-  gameIdDoesNotExistValidator,
   xssSanitizerMany(gameFields),
   validationCheck,
   genericSanitizerMany(gameFields),
@@ -111,7 +100,6 @@ export const updateGame = [
     .isFloat({ min: 0.5, max: 100 })
     .withMessage('units must be a number between 0.5 and 100')
     .optional(),
-  semesterValidator({ field: 'semester', optional: true }),
   stringValidator({
     field: 'level',
     valueRequired: false,
@@ -143,7 +131,7 @@ export async function updateGameHandler(
     return next();
   }
 
-  const game = await getGameByGameId(gameId);
+  const game = await getGameByGameId(Number(gameId));
 
   if (!game) {
     return next();
@@ -176,7 +164,7 @@ export async function updateGameHandler(
     typeof units === 'string' && units ? units : null,
   ];
 
-  const updated = await conditionalUpdate('game', game.id, fields, values);
+  const updated = await conditionalUpdate('games', game.id, fields, values);
   console.log('updated :>> ', updated);
   if (!updated) {
     return next(new Error('unable to update game'));
@@ -199,7 +187,7 @@ export async function deleteGame(
     return next();
   }
 
-  const game = await getGameByGameId(gameId);
+  const game = await getGameByGameId(Number(gameId));
 
   if (!game) {
     return next();
@@ -213,3 +201,7 @@ export async function deleteGame(
 
   return res.status(204).json({});
 }
+function semesterValidator(arg0: { field: string; }) {
+  throw new Error('Function not implemented.');
+}
+
