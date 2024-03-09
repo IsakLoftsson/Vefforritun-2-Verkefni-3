@@ -5,16 +5,21 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon",
-    "start": "node --loader ts-node/esm ./src/app.ts"
+    "start": "node --loader ts-node/esm ./src/app.ts",
+    "lint": "run-p lint:*",
+    "lint:eslint": "eslint ./src/**/*.js",
+    "eslint": "eslint ./src/**/*.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.5",
+    "eslint": "^8.57.0",
     "express": "^4.18.3",
     "express-validator": "^7.0.1",
     "pg": "^8.11.3",
+    "run-p": "^0.0.0",
     "slugify": "^1.6.6",
     "ts-node": "^10.9.2",
     "xss": "^1.0.15"

@@ -45,6 +45,8 @@ export async function getGame(
   return res.json(game);
 }
 
+/*
+
 export async function createGamesHandler(
   req: Request,
   res: Response,
@@ -76,10 +78,8 @@ export async function createGamesHandler(
   return res.json(gameMapper(createdGame));
 }
 
-/*
-
-const gameFields = ['gameId', 'title', 'level', 'url', 'semester', 'units'];
-
+const gameFields = ['id', 'date', 'home', 'away', 'home_score', 'away_score'];
+ 
 export const createGame = [
   stringValidator({ field: 'gameId', maxLength: 16 }),
   stringValidator({ field: 'title', maxLength: 64 }),

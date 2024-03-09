@@ -2,7 +2,6 @@ import express, { Request, Response, NextFunction} from 'express';
 
 import { listTeams, createTeam, getTeam, updateTeam, deleteTeam } from './teams-router.js';
 import { listGames, getGame } from './games-router.js';
-// , createGame, updateGame, deleteGame } from './games-router.js';
 
 export const apiRouter = express.Router();
 
