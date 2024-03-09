@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction} from 'express';
-import { teamsRouter, listTeams } from './teams-router.js';
-import { gamesRouter } from './games-router.js';
+import { listTeams, createTeam, getTeam, updateTeam, deleteTeam } from './teams-router.js';
+import { listGames, createGame, getGame, updateGame, deleteGame } from './games-router.js';
 
 export const apiRouter = express.Router();
 
@@ -26,17 +26,15 @@ export async function indexRoute(req: Request, res: Response) {
 }
 
 apiRouter.get('/', indexRoute);
-apiRouter.use('/teams', teamsRouter);
-apiRouter.use('/games', gamesRouter);
 
-teamsRouter.get('/', listTeams);
-teamsRouter.post('/', createTeam);
-teamsRouter.get('/:slug', getTeam);
-teamsRouter.patch('/:slug', updateTeam);
-teamsRouter.delete('/:slug', deleteTeam);
+apiRouter.get('/', listTeams);
+apiRouter.post('/', createTeam);
+apiRouter.get('/:slug', getTeam);
+apiRouter.patch('/:slug', updateTeam);
+apiRouter.delete('/:slug', deleteTeam);
 
-gamesRouter.get('/', listGames);
-gamesRouter.post('/', createGame);
-gamesRouter.get('/:id', getGame);
-gamesRouter.patch('/:id', updateGame);
-gamesRouter.delete('/:id', deleteGame);
+apiRouter.get('/', listGames);
+apiRouter.post('/', createGame);
+apiRouter.get('/:id', getGame);
+apiRouter.patch('/:id', updateGame);
+apiRouter.delete('/:id', deleteGame);

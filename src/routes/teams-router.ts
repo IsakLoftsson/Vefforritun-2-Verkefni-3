@@ -2,10 +2,8 @@ import express, { Request, Response, NextFunction} from 'express';
 import slugify from 'slugify';
 
 import { Team } from '../lib/types';
+import { teamMapper } from '../lib/mappers';
 import { getTeams } from '../lib/db';
-
-
-export const teamsRouter = express.Router();
 
 export async function listTeams(
     req: Request,
